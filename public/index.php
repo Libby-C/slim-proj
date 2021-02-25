@@ -1,15 +1,26 @@
 <?php
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Factory\AppFactory;
+use \Psr\Http\Message\ServerRequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
 
-require __DIR__ . '/../vendor/autoload.php';
+require '../vendor/autoload.php';
 
-$app = AppFactory::create();
+// Turn on in development mode to get info about errors
+$config['displayErrorDetails'] = true;
+$config['addContentLengthHeader'] = false;
 
-$app->get('/', function (Request $request, Response $response, $args) {
-    $response->getBody()->write("Hello world!");
+$config['db']['host']   = 'localhost';
+$config['db']['user']   = 'user';
+$config['db']['pass']   = 'password';
+$config['db']['dbname'] = 'book-test';
+
+
+$app = new \Slim\App(['settings' => $config]);
+
+$container = $app->getContainer();
+$app->get('/hello/{name}', function (Request $request, Response $response, array $args) {
+    $name = $args['name'];
+    $response->getBody()->write("Hello, $name");
+
     return $response;
 });
-
 $app->run();
